@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Profesional</title>
+    <meta name="description" content="Website Portofolio Profesional">
+    
+    <!-- Tailwind CSS untuk Styling Modern dan Responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Konfigurasi Tema Tailwind (Dark Blue & Gold) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            800: '#102a43',
+                            900: '#0a192f', // Warna background utama dark mode
+                        },
+                        gold: {
+                            400: '#facc15',
+                            500: '#d4af37', // Aksen Emas Premium
+                            600: '#b49126',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts: Plus Jakarta Sans untuk tampilan modern 2026 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS untuk Animasi dan Komponen Khusus -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #0a192f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Scrollbar Kustom */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        .dark ::-webkit-scrollbar-track { background: #0a192f; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b49126; }
+
+        /* Animasi Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Timeline styling */
+        .timeline-dot {
+            position: absolute;
+            left: -6px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #d4af37;
+            border: 3px solid white;
+        }
+        .dark .timeline-dot { border-color: #0a192f; }
+
+        /* Animasi gradien teks */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #d4af37, #facc15);
+        }
+
+        /* Lightbox styling */
+        #lightbox {
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-navy-900 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Navigasi -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4 px-6 md:px-12 backdrop-blur-md bg-white/80 dark:bg-navy-900/80 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold tracking-tighter text-navy-900 dark:text-white">
+                <span id="nav-logo" class="text-gradient"></span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-gold-500 transition">Tentang</a>
+                <a href="#experience" class="hover:text-gold-500 transition">Pengalaman</a>
+                <a href="#portfolio" class="hover:text-gold-500 transition">Portofolio</a>
+                <a href="#contact" class="hover:text-gold-500 transition">Kontak</a>
+                
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-navy-800 transition">
+                    <i class="fas fa-moon dark:hidden text-navy-800"></i>
+                    <i class="fas fa-sun hidden dark:block text-gold-500"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center gap-4">
+                <button id="theme-toggle-mobile" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-navy-800 transition">
+                    <i class="fas fa-moon dark:hidden text-navy-800"></i>
+                    <i class="fas fa-sun hidden dark:block text-gold-500"></i>
+                </button>
+                <button id="mobile-menu-btn" class="text-2xl text-navy-900 dark:text-white">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white dark:bg-navy-900 shadow-lg hidden flex-col py-4 px-6 border-t border-gray-100 dark:border-navy-800">
+            <a href="#about" class="py-3 border-b border-gray-100 dark:border-navy-800 hover:text-gold-500">Tentang</a>
+            <a href="#experience" class="py-3 border-b border-gray-100 dark:border-navy-800 hover:text-gold-500">Pengalaman</a>
+            <a href="#portfolio" class="py-3 border-b border-gray-100 dark:border-navy-800 hover:text-gold-500">Portofolio</a>
+            <a href="#contact" class="py-3 hover:text-gold-500">Kontak</a>
+        </div>
+    </nav>
+
+    <!-- KONTEN UTAMA AKAN DI-GENERATE OLEH JAVASCRIPT DI BAWAH INI -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center pt-20 pb-12 px-6 md:px-12 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-gold-500/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-navy-800/10 dark:bg-blue-500/10 blur-3xl"></div>
+            
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center z-10">
+                <div class="order-2 md:order-1 reveal">
+                    <p class="text-gold-500 font-semibold mb-2 tracking-wide uppercase text-sm" id="hero-greeting"></p>
+                    <h1 class="text-5xl md:text-7xl font-extrabold text-navy-900 dark:text-white mb-4 leading-tight">
+                        <span id="hero-name"></span>
+                    </h1>
+                    <h2 class="text-2xl md:text-3xl font-medium text-gray-600 dark:text-gray-400 mb-6" id="hero-role"></h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-lg leading-relaxed" id="hero-desc"></p>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#contact" class="px-8 py-3.5 bg-gold-500 hover:bg-gold-600 text-white font-semibold rounded-full shadow-lg shadow-gold-500/30 transition-all hover:-translate-y-1">
+                            Hubungi Saya
+                        </a>
+                        <a href="#" id="hero-cv" class="px-8 py-3.5 bg-white dark:bg-navy-800 text-navy-900 dark:text-white border border-gray-200 dark:border-navy-700 hover:border-gold-500 dark:hover:border-gold-500 font-semibold rounded-full transition-all hover:-translate-y-1 flex items-center gap-2">
+                            <i class="fas fa-download"></i> Download CV
+                        </a>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center md:justify-end reveal">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px]">
+                        <div class="absolute inset-0 border-2 border-gold-500 rounded-full translate-x-4 translate-y-4"></div>
+                        <img id="hero-img" src="" alt="Profile Photo" class="relative z-10 w-full h-full object-cover rounded-full shadow-2xl border-4 border-white dark:border-navy-900">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tentang Saya & Keahlian -->
+        <section id="about" class="py-20 px-6 md:px-12 bg-white dark:bg-navy-800/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Tentang <span class="text-gradient">Saya</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <div class="reveal">
+                        <h3 class="text-2xl font-bold mb-6 text-navy-900 dark:text-white">Profil Profesional</h3>
+                        <div id="about-profile" class="space-y-4 text-gray-600 dark:text-gray-400 leading-relaxed text-justify"></div>
+                        
+                        <h3 class="text-xl font-bold mt-8 mb-4 text-navy-900 dark:text-white">Keunggulan Utama</h3>
+                        <ul id="about-values" class="space-y-3"></ul>
+                    </div>
+
+                    <div class="reveal">
+                        <h3 class="text-2xl font-bold mb-6 text-navy-900 dark:text-white">Keahlian Teknis</h3>
+                        <div id="skills-tech" class="space-y-5"></div>
+                        
+                        <h3 class="text-xl font-bold mt-8 mb-4 text-navy-900 dark:text-white">Keahlian Interpersonal</h3>
+                        <div id="skills-soft" class="flex flex-wrap gap-3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pengalaman & Pendidikan (Timeline) -->
+        <section id="experience" class="py-20 px-6 md:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Perjalanan <span class="text-gradient">Karir</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Pengalaman -->
+                    <div class="reveal">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-navy-900 dark:text-white">
+                            <i class="fas fa-briefcase text-gold-500"></i> Pengalaman Kerja
+                        </h3>
+                        <div id="experience-list" class="border-l-2 border-gray-200 dark:border-navy-700 ml-3 pl-8 space-y-10 relative"></div>
+                    </div>
+
+                    <!-- Pendidikan -->
+                    <div class="reveal">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center gap-3 text-navy-900 dark:text-white">
+                            <i class="fas fa-graduation-cap text-gold-500"></i> Pendidikan Formal
+                        </h3>
+                        <div id="education-list" class="border-l-2 border-gray-200 dark:border-navy-700 ml-3 pl-8 space-y-10 relative"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portofolio / Proyek -->
+        <section id="portfolio" class="py-20 px-6 md:px-12 bg-white dark:bg-navy-800/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Proyek <span class="text-gradient">Unggulan</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Beberapa karya dan proyek terbaik yang pernah saya selesaikan.</p>
+                </div>
+
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Proyek akan diisi oleh JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Sertifikat & Prestasi -->
+        <section id="certificates" class="py-20 px-6 md:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <!-- Sertifikat -->
+                    <div class="reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Sertifikasi <span class="text-gradient">Profesional</span></h2>
+                        <div class="w-20 h-1 bg-gold-500 rounded-full mb-8"></div>
+                        <div id="certificates-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <!-- Prestasi -->
+                    <div class="reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Penghargaan & <span class="text-gradient">Prestasi</span></h2>
+                        <div class="w-20 h-1 bg-gold-500 rounded-full mb-8"></div>
+                        <div id="achievements-list" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galeri / Dokumentasi -->
+        <section id="gallery" class="py-20 px-6 md:px-12 bg-white dark:bg-navy-800/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Galeri <span class="text-gradient">Dokumentasi</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                </div>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 reveal"></div>
+            </div>
+        </section>
+
+        <!-- Kontak -->
+        <section id="contact" class="py-20 px-6 md:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy-900 dark:text-white mb-4">Mari <span class="text-gradient">Bekerjasama</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Tertarik untuk berkolaborasi? Jangan ragu untuk menghubungi saya.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <!-- Info Kontak -->
+                    <div class="lg:col-span-1 space-y-6 reveal">
+                        <div class="bg-white dark:bg-navy-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-navy-700 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-gold-500/10 text-gold-500 rounded-full flex items-center justify-center shrink-0 text-xl">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-navy-900 dark:text-white text-lg">Email</h4>
+                                <a id="contact-email" href="" class="text-gray-600 dark:text-gray-400 hover:text-gold-500 break-all"></a>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-navy-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-navy-700 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-gold-500/10 text-gold-500 rounded-full flex items-center justify-center shrink-0 text-xl">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-navy-900 dark:text-white text-lg">WhatsApp</h4>
+                                <a id="contact-wa" href="" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gold-500"></a>
+                            </div>
+                        </div>
+                        
+                        <!-- Peta / Alamat (Opsional) -->
+                        <div id="contact-map-container" class="rounded-2xl overflow-hidden shadow-sm h-48 bg-gray-200 dark:bg-navy-800 relative hidden">
+                            <iframe id="contact-map" src="" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Form Kontak -->
+                    <div class="lg:col-span-2 reveal">
+                        <form id="contact-form" class="bg-white dark:bg-navy-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-navy-700">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap</label>
+                                    <input type="text" required class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-navy-900 border border-gray-200 dark:border-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-500 text-gray-800 dark:text-white transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                    <input type="email" required class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-navy-900 border border-gray-200 dark:border-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-500 text-gray-800 dark:text-white transition">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subjek</label>
+                                <input type="text" required class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-navy-900 border border-gray-200 dark:border-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-500 text-gray-800 dark:text-white transition">
+                            </div>
+                            <div class="mb-8">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pesan</label>
+                                <textarea rows="5" required class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-navy-900 border border-gray-200 dark:border-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-500 text-gray-800 dark:text-white transition"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-bold rounded-lg shadow-lg transition-all hover:-translate-y-1">
+                                Kirim Pesan <i class="fas fa-paper-plane ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 dark:bg-[#061020] text-gray-300 py-12 border-t border-navy-800">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <p class="font-bold text-white text-xl mb-2" id="footer-name"></p>
+                <p class="text-sm text-gray-400" id="footer-desc"></p>
+            </div>
+            
+            <div class="flex gap-4" id="footer-social">
+                <!-- Social links diisi via JS -->
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 md:px-12 mt-8 pt-8 border-t border-navy-800 text-center text-sm text-gray-500">
+            <p>&copy; <span id="current-year"></span> <span id="footer-copyright-name"></span>. Hak Cipta Dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 bg-gold-500 text-white rounded-full shadow-lg flex justify-center items-center opacity-0 translate-y-10 transition-all duration-300 z-40 hover:bg-gold-600 focus:outline-none">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-black/90 hidden flex justify-center items-center opacity-0">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white text-3xl hover:text-gold-500 transition focus:outline-none">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="lightbox-img" src="" class="max-w-[90%] max-h-[90vh] object-contain rounded shadow-2xl border border-gray-800" alt="Fullscreen Image">
+        <p id="lightbox-caption" class="absolute bottom-6 left-0 right-0 text-center text-white text-lg bg-black/50 p-2 mx-auto w-fit rounded backdrop-blur-sm"></p>
+    </div>
+
+    <!-- Custom Modal untuk Notifikasi -->
+    <div id="msg-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex justify-center items-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-white dark:bg-navy-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="msg-modal-content">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-navy-900 dark:text-white mb-2">Terkirim!</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Pesan Anda telah berhasil dikirim. Saya akan membalas secepatnya.</p>
+                <button id="close-msg-modal" class="w-full py-3 bg-gold-500 text-white font-semibold rounded-lg hover:bg-gold-600 transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BAGIAN DATA DAN LOGIKA JAVASCRIPT UTAMA -->
+    <!-- ========================================== -->
+    <script>
+        // PENTING: EDIT SEMUA DATA PORTFOLIO ANDA DI SINI
+        // Objek konfigurasi utama. Anda hanya perlu mengubah nilai di dalam tanda kutip.
+        const portfolioData = {
+            personal: {
+                name: "Imam Ala Uddin. S.Si.,",
+                shortName: "Imam Ala Uddin", // Untuk logo navigasi
+                role: "GIS Officer & Perencana Tata Ruang",
+                greeting: "Halo, Selamat Datang",
+                description: "Fresh Graduate Geography Student, State University of Malang | Design Specialist Geographic Information System (GIS) | Remote Sensing Specialist | Environmental Planner | Conservation Scientist | Geospatial Analyst",
+                photo: "file:///C:/Users/BMN_2UM/Downloads/WhatsApp%20Image%202026-06-11%20at%2009.26.38.jpeg", // Ganti link foto Anda
+                cvLink: "https://drive.google.com/drive/folders/1PBvIN9bVOr_5iuP6KmEQECxpxAkfGblq?usp=sharing" // Masukkan link Google Drive/PDF CV Anda di sini
+            },
+            about: {
+                profile: [
+                    "Lulusan S1 Geografi Universitas Negeri Malang dengan kemampuan dalam pengolahan data spasial, pemetaan, dan penyusunan laporan menggunakan ArcGIS.",
+                    "Memiliki pengalaman kegiatan survei lapangan, analisis data geografis, serta kemampuan komunikasi dan koordinasi yang baik. Teliti, adaptif, dan siap mendukung kegiatan monitoring serta pelaporan reklamasi di lapangan maupun kantor."
+                ],
+                values: [
+                    "Akurasi Data Tingkat Tinggi",
+                    "Solusi Analisis Geospasial Kustom",
+                    "Penyelesaian Proyek Tepat Waktu",
+                    "Komunikasi Laporan yang Visual & Intuitif"
+                ]
+            },
+            skills: {
+                technical: [
+                    { name: "ArcGIS Pro / QGIS", level: 95 },
+                    { name: "Spatial Analysis & Modeling", level: 90 },
+                    { name: "WebGIS (Leaflet, Mapbox)", level: 85 },
+                    { name: "Python (Geopandas, ArcPy)", level: 80 },
+                    { name: "Remote Sensing / Penginderaan Jauh", level: 85 },
+                    { name: "PostGIS / Database Spasial", level: 75 }
+                ],
+                nonTechnical: [
+                    "Project Management", "Problem Solving", "Data Visualization", "Client Communication", "Team Leadership"
+                ]
+            },
+            experience: [
+                {
+                    position: "Tim Penyusun RDTR",
+                    company: "Dinas Pekerjaan Umum dan Tata Ruang Kabupaten Rembang",
+                    period: "Feb 2024 - Jun 2024",
+                    description: "Sebagai Tim Penyusun Rencana Detail Tata Ruang (RDTR), saya berperan dalam mendukung seluruh tahapan penyusunan dokumen RDTR, mulai dari persiapan, pengumpulan data dan informasi, hingga penyusunan konsep rencana."
+                }
+            ],
+            education: [
+                {
+                    degree: "Sarjana (S.Si.) Ilmu Geografi",
+                    institution: "Universitas Negeri Malang",
+                    year: "2021 - 2025",
+                    description: "Fokus pada perencanaan tata ruang. Lulus dengan predikat Cum Laude (IPK 3.74)."
+                }
+            ],
+            projects: [
+                {
+                    title: "Dashboard WebGIS Tata Ruang Kota",
+                    image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    description: "Platform interaktif untuk melihat peruntukan lahan kota secara real-time, dilengkapi fitur cetak peta mandiri.",
+                    tech: ["React", "Leaflet.js", "PostGIS", "GeoServer"],
+                    link: "#"
+                },
+                {
+                    title: "Analisis Risiko Banjir Regional",
+                    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    description: "Pemodelan spasial kerentanan banjir menggunakan metode AHP dan data DEM resolusi tinggi.",
+                    tech: ["ArcGIS Pro", "Python", "Spatial Analyst"],
+                    link: "#"
+                },
+                {
+                    title: "Pemetaan Utilitas Jaringan Pipa",
+                    image: "https://images.unsplash.com/photo-1508450859948-4e04fabaa4ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    description: "Digitalisasi dan inventarisasi aset jaringan pipa air bersih sepanjang 500km berbasis mobile GIS.",
+                    tech: ["QGIS", "KoboToolbox", "PostgreSQL"],
+                    link: "#"
+                }
+            ],
+            certificates: [
+                {
+                    name: "Esri Certified Professional - ArcGIS Pro",
+                    issuer: "Esri Inc.",
+                    year: "2023",
+                    link: "#"
+                },
+                {
+                    name: "Sertifikat Ahli Madya Sistem Informasi Geografis",
+                    issuer: "Ikatan Surveyor Indonesia (ISI)",
+                    year: "2022",
+                    link: "#"
+                },
+                {
+                    name: "Remote Sensing and Image Analysis",
+                    issuer: "Coursera / UC Davis",
+                    year: "2020",
+                    link: "#"
+                }
+            ],
+            achievements: [
+                { title: "Penghargaan Analis Inovatif Tahun Ini", year: "2024", description: "Diberikan oleh PT Geospasial Solusi atas inovasi otomasi pelaporan pemetaan." },
+                { title: "Juara 1 Lomba Pemetaan Tematik Nasional", year: "2021", description: "Diselenggarakan oleh Badan Informasi Geospasial (BIG)." }
+            ],
+            gallery: [
+                { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", caption: "Survei Lapangan dengan UAV" },
+                { image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", caption: "Presentasi Hasil Analisis di BAPPEDA" },
+                { image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", caption: "Rapat Koordinasi Tim GIS" },
+                { image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", caption: "Proses Digitasi Peta di Kantor" }
+            ],
+            contact: {
+                email: "kontak@budipratama.com",
+                whatsapp: "6281234567890", // Gunakan format 62...
+                linkedin: "https://linkedin.com",
+                github: "https://github.com",
+                instagram: "https://instagram.com",
+                // Opsional: URL Embed Google Maps. Kosongkan ("") jika tidak ingin menampilkan peta.
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126748.56347862248!2d107.57311654129782!3d-6.903444341687337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e6398252477f%3A0x146a1f93d3e815b2!2sBandung%2C%20Bandung%20City%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+            }
+        };
+
+        // ==========================================
+        // FUNGSI RENDER - TIDAK PERLU DIEDIT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Render Hero & Personal Info
+            document.getElementById('nav-logo').textContent = portfolioData.personal.shortName;
+            document.getElementById('hero-greeting').textContent = portfolioData.personal.greeting;
+            document.getElementById('hero-name').textContent = portfolioData.personal.name;
+            document.getElementById('hero-role').textContent = portfolioData.personal.role;
+            document.getElementById('hero-desc').textContent = portfolioData.personal.description;
+            document.getElementById('hero-img').src = portfolioData.personal.photo;
+            document.getElementById('hero-cv').href = portfolioData.personal.cvLink;
+            
+            document.getElementById('footer-name').textContent = portfolioData.personal.name;
+            document.getElementById('footer-desc').textContent = portfolioData.personal.role;
+            document.getElementById('footer-copyright-name').textContent = portfolioData.personal.name;
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // 2. Render About
+            const profileHTML = portfolioData.about.profile.map(p => `<p>${p}</p>`).join('');
+            document.getElementById('about-profile').innerHTML = profileHTML;
+            
+            const valuesHTML = portfolioData.about.values.map(v => `
+                <li class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-gold-500"></i>
+                    <span class="text-gray-700 dark:text-gray-300">${v}</span>
+                </li>`).join('');
+            document.getElementById('about-values').innerHTML = valuesHTML;
+
+            // 3. Render Skills
+            const techHTML = portfolioData.skills.technical.map(skill => `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="font-medium text-gray-700 dark:text-gray-300 text-sm">${skill.name}</span>
+                        <span class="text-gold-500 text-sm font-bold">${skill.level}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-navy-700 rounded-full h-2.5">
+                        <div class="bg-gold-500 h-2.5 rounded-full" style="width: ${skill.level}%"></div>
+                    </div>
+                </div>`).join('');
+            document.getElementById('skills-tech').innerHTML = techHTML;
+
+            const softHTML = portfolioData.skills.nonTechnical.map(skill => `
+                <span class="px-4 py-2 bg-white dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-gray-700 dark:text-gray-300 text-sm rounded-full shadow-sm">
+                    ${skill}
+                </span>`).join('');
+            document.getElementById('skills-soft').innerHTML = softHTML;
+
+            // 4. Render Experience
+            const expHTML = portfolioData.experience.map(exp => `
+                <div class="relative">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white dark:bg-navy-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-navy-700 hover:border-gold-500 dark:hover:border-gold-500 transition-colors">
+                        <span class="text-sm font-bold text-gold-500 mb-1 block">${exp.period}</span>
+                        <h4 class="text-xl font-bold text-navy-900 dark:text-white">${exp.position}</h4>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">${exp.company}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">${exp.description}</p>
+                    </div>
+                </div>`).join('');
+            document.getElementById('experience-list').innerHTML = expHTML;
+
+            // 5. Render Education
+            const eduHTML = portfolioData.education.map(edu => `
+                <div class="relative">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white dark:bg-navy-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-navy-700 hover:border-gold-500 dark:hover:border-gold-500 transition-colors">
+                        <span class="text-sm font-bold text-gold-500 mb-1 block">${edu.year}</span>
+                        <h4 class="text-xl font-bold text-navy-900 dark:text-white">${edu.degree}</h4>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">${edu.institution}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">${edu.description}</p>
+                    </div>
+                </div>`).join('');
+            document.getElementById('education-list').innerHTML = eduHTML;
+
+            // 6. Render Projects
+            const projHTML = portfolioData.projects.map(proj => `
+                <div class="bg-white dark:bg-navy-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-navy-700 group hover:-translate-y-2 transition-all duration-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${proj.image}" alt="${proj.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-navy-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center items-center">
+                            <a href="${proj.link}" class="w-12 h-12 bg-gold-500 text-white rounded-full flex justify-center items-center hover:bg-white hover:text-navy-900 transition-colors">
+                                <i class="fas fa-link"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-navy-900 dark:text-white mb-2">${proj.title}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">${proj.description}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${proj.tech.map(t => `<span class="text-xs font-semibold px-2.5 py-1 bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 rounded">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>`).join('');
+            document.getElementById('projects-grid').innerHTML = projHTML;
+
+            // 7. Render Certificates & Achievements
+            const certHTML = portfolioData.certificates.map(cert => `
+                <div class="bg-gray-50 dark:bg-navy-800 p-5 rounded-xl border border-gray-200 dark:border-navy-700 flex flex-col justify-between h-full hover:shadow-md transition">
+                    <div>
+                        <div class="text-gold-500 text-2xl mb-3"><i class="fas fa-certificate"></i></div>
+                        <h4 class="font-bold text-navy-900 dark:text-white leading-tight mb-1">${cert.name}</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${cert.issuer}</p>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-xs font-bold text-gray-400">${cert.year}</span>
+                        <a href="${cert.link}" class="text-sm text-gold-500 hover:text-gold-600 font-semibold"><i class="fas fa-external-link-alt"></i> Lihat</a>
+                    </div>
+                </div>`).join('');
+            document.getElementById('certificates-list').innerHTML = certHTML;
+
+            const achvHTML = portfolioData.achievements.map(achv => `
+                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-navy-800/50 transition border border-transparent hover:border-gray-200 dark:hover:border-navy-700">
+                    <div class="w-12 h-12 rounded-full bg-gold-500/10 text-gold-500 flex justify-center items-center shrink-0">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-navy-900 dark:text-white">${achv.title}</h4>
+                        <p class="text-xs font-bold text-gold-500 mb-1">${achv.year}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${achv.description}</p>
+                    </div>
+                </div>`).join('');
+            document.getElementById('achievements-list').innerHTML = achvHTML;
+
+            // 8. Render Gallery
+            const galleryHTML = portfolioData.gallery.map(item => `
+                <div class="relative group overflow-hidden rounded-xl cursor-pointer shadow-sm" onclick="openLightbox('${item.image}', '${item.caption}')">
+                    <img src="${item.image}" alt="Gallery" class="w-full h-48 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="text-white text-sm font-medium translate-y-4 group-hover:translate-y-0 transition-transform duration-300">${item.caption}</p>
+                    </div>
+                </div>`).join('');
+            document.getElementById('gallery-grid').innerHTML = galleryHTML;
+
+            // 9. Render Contact & Footer Socials
+            document.getElementById('contact-email').textContent = portfolioData.contact.email;
+            document.getElementById('contact-email').href = `mailto:${portfolioData.contact.email}`;
+            
+            const waNumber = portfolioData.contact.whatsapp;
+            document.getElementById('contact-wa').textContent = `+${waNumber}`;
+            document.getElementById('contact-wa').href = `https://wa.me/${waNumber}`;
+
+            if(portfolioData.contact.mapUrl) {
+                const mapContainer = document.getElementById('contact-map-container');
+                const mapIframe = document.getElementById('contact-map');
+                mapIframe.src = portfolioData.contact.mapUrl;
+                mapContainer.classList.remove('hidden');
+            }
+
+            const socialLinks = [
+                { url: portfolioData.contact.linkedin, icon: 'fab fa-linkedin-in' },
+                { url: portfolioData.contact.github, icon: 'fab fa-github' },
+                { url: portfolioData.contact.instagram, icon: 'fab fa-instagram' }
+            ].filter(s => s.url && s.url !== "#");
+
+            const socialHTML = socialLinks.map(s => `
+                <a href="${s.url}" target="_blank" class="w-10 h-10 rounded-full bg-navy-800 flex justify-center items-center text-gray-400 hover:bg-gold-500 hover:text-white transition">
+                    <i class="${s.icon}"></i>
+                </a>`).join('');
+            document.getElementById('footer-social').innerHTML = socialHTML;
+
+            // Hilangkan Loader setelah data di-render
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }, 500); // Sedikit delay agar animasi halus
+
+            // Inisialisasi Fungsi Interaktif (Observer, Dark Mode, dll)
+            initInteractions();
+        });
+
+        // ==========================================
+        // LOGIKA INTERAKSI UI
+        // ==========================================
+        function initInteractions() {
+            // 1. Dark Mode Toggle
+            const html = document.documentElement;
+            const themeBtns = [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')];
+            
+            // Cek preferensi sistem atau localStorage
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+            }
+
+            themeBtns.forEach(btn => {
+                if(btn) {
+                    btn.addEventListener('click', () => {
+                        html.classList.toggle('dark');
+                        if (html.classList.contains('dark')) {
+                            localStorage.theme = 'dark';
+                        } else {
+                            localStorage.theme = 'light';
+                        }
+                    });
+                }
+            });
+
+            // 2. Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+                const icon = mobileMenuBtn.querySelector('i');
+                if(mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+
+            // Tutup menu saat link diklik
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                    mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+                    mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+                });
+            });
+
+            // 3. Navbar Sticky & Back to Top
+            const navbar = document.getElementById('navbar');
+            const backToTop = document.getElementById('back-to-top');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('shadow-md');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                }
+
+                if (window.scrollY > 500) {
+                    backToTop.classList.remove('opacity-0', 'translate-y-10');
+                    backToTop.classList.add('opacity-100', 'translate-y-0');
+                } else {
+                    backToTop.classList.add('opacity-0', 'translate-y-10');
+                    backToTop.classList.remove('opacity-100', 'translate-y-0');
+                }
+            });
+
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // 4. Scroll Reveal Animation
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => revealOnScroll.observe(el));
+
+            // 5. Contact Form Submit (Mencegah reload dan menampilkan modal)
+            const form = document.getElementById('contact-form');
+            const modal = document.getElementById('msg-modal');
+            const modalContent = document.getElementById('msg-modal-content');
+            const closeModalBtn = document.getElementById('close-msg-modal');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Mencegah submit default
+                
+                // Animasi Loading Tombol (opsional)
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mengirim...';
+                btn.disabled = true;
+
+                // Simulasi pengiriman data (delay 1.5 detik)
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    form.reset(); // Kosongkan form
+
+                    // Tampilkan Modal Notifikasi
+                    modal.classList.remove('hidden');
+                    // Trigger reflow agar transisi jalan
+                    void modal.offsetWidth; 
+                    modal.classList.remove('opacity-0');
+                    modal.classList.add('opacity-100');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 1500);
+            });
+
+            function closeModal() {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) closeModal();
+            });
+
+            // 6. Setup penutupan Lightbox
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('close-lightbox').addEventListener('click', closeLightboxHandler);
+            lightbox.addEventListener('click', (e) => {
+                if(e.target === lightbox) closeLightboxHandler();
+            });
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'Escape') closeLightboxHandler();
+            });
+        }
+
+        // ==========================================
+        // FUNGSI LIGHTBOX GALERI
+        // ==========================================
+        function openLightbox(src, caption) {
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-caption').textContent = caption;
+            
+            lightbox.classList.remove('hidden');
+            // Trigger reflow
+            void lightbox.offsetWidth;
+            lightbox.classList.remove('opacity-0');
+            lightbox.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden'; // Cegah scroll body
+        }
+
+        function closeLightboxHandler() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('opacity-100');
+            lightbox.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                document.body.style.overflow = ''; // Kembalikan scroll body
+            }, 300);
+        }
+    </script>
+</body>
+</html>
